@@ -1,7 +1,7 @@
-import React from 'react'
-import { Text } from 'react-native'
-import shallowCompare from 'react-addons-shallow-compare'
-import { AllHtmlEntities } from 'html-entities'
+import React from 'react';
+import { Text } from 'react-native';
+import shallowCompare from 'react-addons-shallow-compare';
+import { AllHtmlEntities } from 'html-entities';
 import PropTypes from 'prop-types';
 
 const RE = Object.freeze({
@@ -11,16 +11,34 @@ const RE = Object.freeze({
   PREFIX_NEWLINE: new RegExp(/^\n/g),
   PREFIX_WHITESPACE: new RegExp(/^\s/g),
 
-  SUFFIX_NEWLINE: new RegExp(/\n$/g)
-})
+  SUFFIX_NEWLINE: new RegExp(/\n$/g),
+});
 const TEXT_TAG_NAMES = [
-  'p', 'span', 'li', 'a',
-  'em', 'i', 'u', 'b', 'strong', 'big', 'small',
-  'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
-].reduce((acc, n) => { acc.add(n); return acc }, new Set())
-const PRE_TAG_NAMES = [
-  'pre', 'code'
-].reduce((acc, n) => { acc.add(n); return acc }, new Set())
+  'p',
+  'span',
+  'li',
+  'a',
+  'em',
+  'i',
+  'u',
+  'b',
+  'strong',
+  'big',
+  'small',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+].reduce((acc, n) => {
+  acc.add(n);
+  return acc;
+}, new Set());
+const PRE_TAG_NAMES = ['pre', 'code'].reduce((acc, n) => {
+  acc.add(n);
+  return acc;
+}, new Set());
 
 class HTMLTextNode extends React.Component {
   /* ****************************************************************************/
@@ -38,23 +56,23 @@ class HTMLTextNode extends React.Component {
   * @param parentTagName: the name of the parent node
   * @return the new string
   */
-  static removeWhitespaceListHTML (str, nodeIndex, parentTagName) {
+  static removeWhitespaceListHTML(str, nodeIndex, parentTagName) {
     if (PRE_TAG_NAMES.has(parentTagName)) {
-      return str
+      return str;
     } else {
       const htmlStr = str
         .replace(RE.MULT_NEWLINE, '\n')
         .replace(RE.MULT_WHITESPACE, ' ')
         .replace(RE.PREFIX_NEWLINE, '')
-        .replace(RE.SUFFIX_NEWLINE, '')
+        .replace(RE.SUFFIX_NEWLINE, '');
 
       if (!TEXT_TAG_NAMES.has(parentTagName) && htmlStr.trim().length === 0) {
-        return ''
+        return '';
       } else {
         if (nodeIndex === 0) {
-          return htmlStr.replace(RE.PREFIX_WHITESPACE, '')
+          return htmlStr.replace(RE.PREFIX_WHITESPACE, '');
         } else {
-          return htmlStr
+          return htmlStr;
         }
       }
     }
@@ -64,17 +82,19 @@ class HTMLTextNode extends React.Component {
   // Data Lifecycle
   /* ****************************************************************************/
 
-  shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
   }
 
   /* ****************************************************************************/
   // Rendering
   /* ****************************************************************************/
 
-  render () {
-    return (<Text {...this.props}>{AllHtmlEntities.decode(this.props.children)}</Text>)
+  render() {
+    return (
+      <Text {...this.props}>{AllHtmlEntities.decode(this.props.children)}</Text>
+    );
   }
 }
 
-module.exports = HTMLTextNode
+module.exports = HTMLTextNode;

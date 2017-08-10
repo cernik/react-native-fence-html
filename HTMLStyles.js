@@ -1,49 +1,74 @@
-import { StyleSheet } from 'react-native'
-import React from 'react'
+import { StyleSheet } from 'react-native';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 // We have to do some munging here as the objects are wrapped
-import _RNTextStylePropTypes from 'react-native/Libraries/Text/TextStylePropTypes'
-import _RNViewStylePropTypes from 'react-native/Libraries/Components/View/ViewStylePropTypes'
-import _RNImageStylePropTypes from 'react-native/Libraries/Image/ImageStylePropTypes'
-const RNTextStylePropTypes = Object.keys(_RNTextStylePropTypes)
-  .reduce((acc, k) => { acc[k] = _RNTextStylePropTypes[k]; return acc }, {})
-const RNViewStylePropTypes = Object.keys(_RNViewStylePropTypes)
-  .reduce((acc, k) => { acc[k] = _RNViewStylePropTypes[k]; return acc }, {})
-const RNImageStylePropTypes = Object.keys(_RNImageStylePropTypes)
-  .reduce((acc, k) => { acc[k] = _RNImageStylePropTypes[k]; return acc }, {})
+import _RNTextStylePropTypes
+  from 'react-native/Libraries/Text/TextStylePropTypes';
+import _RNViewStylePropTypes
+  from 'react-native/Libraries/Components/View/ViewStylePropTypes';
+import _RNImageStylePropTypes
+  from 'react-native/Libraries/Image/ImageStylePropTypes';
+const RNTextStylePropTypes = Object.keys(
+  _RNTextStylePropTypes
+).reduce((acc, k) => {
+  acc[k] = _RNTextStylePropTypes[k];
+  return acc;
+}, {});
+const RNViewStylePropTypes = Object.keys(
+  _RNViewStylePropTypes
+).reduce((acc, k) => {
+  acc[k] = _RNViewStylePropTypes[k];
+  return acc;
+}, {});
+const RNImageStylePropTypes = Object.keys(
+  _RNImageStylePropTypes
+).reduce((acc, k) => {
+  acc[k] = _RNImageStylePropTypes[k];
+  return acc;
+}, {});
 
 const STYLESETS = Object.freeze({
   VIEW: 'view',
   TEXT: 'text',
-  IMAGE: 'image'
-})
+  IMAGE: 'image',
+});
 
-const stylePropTypes = {}
-stylePropTypes[STYLESETS.VIEW] = Object.assign({}, RNViewStylePropTypes)
-stylePropTypes[STYLESETS.TEXT] = Object.assign({}, RNViewStylePropTypes, RNTextStylePropTypes)
-stylePropTypes[STYLESETS.IMAGE] = Object.assign({}, RNViewStylePropTypes, RNImageStylePropTypes)
+const stylePropTypes = {};
+stylePropTypes[STYLESETS.VIEW] = Object.assign({}, RNViewStylePropTypes);
+stylePropTypes[STYLESETS.TEXT] = Object.assign(
+  {},
+  RNViewStylePropTypes,
+  RNTextStylePropTypes
+);
+stylePropTypes[STYLESETS.IMAGE] = Object.assign(
+  {},
+  RNViewStylePropTypes,
+  RNImageStylePropTypes
+);
 
 class HTMLStyles {
-
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
-  constructor () {
-    this.defaultStyles = this._generateDefaultStyles()
+  constructor() {
+    this.defaultStyles = this._generateDefaultStyles();
 
     // RN doesn't support css 'display:inline|block' so we have to treat these differently
-    this.blockElements = [
-      'div', 'ol', 'ul'
-    ].reduce((acc, n) => { acc.add(n); return acc }, new Set())
+    this.blockElements = ['div', 'ol', 'ul'].reduce((acc, n) => {
+      acc.add(n);
+      return acc;
+    }, new Set());
   }
 
   /* ****************************************************************************/
   // Properties
   /* ****************************************************************************/
 
-  get STYLESETS () { return STYLESETS }
+  get STYLESETS() {
+    return STYLESETS;
+  }
 
   /* ****************************************************************************/
   // Generating
@@ -56,33 +81,33 @@ class HTMLStyles {
   * @param marginMultiplier: the amount to multiply the margin by
   * @return a style def for a heading
   */
-  _generateHeadingStyle (baseFontSize, fontMultiplier, marginMultiplier) {
+  _generateHeadingStyle(baseFontSize, fontMultiplier, marginMultiplier) {
     return {
       fontSize: baseFontSize * fontMultiplier,
-      marginTop: (baseFontSize * fontMultiplier) * marginMultiplier,
-      marginBottom: (baseFontSize * fontMultiplier) * marginMultiplier,
-      fontWeight: 'bold'
-    }
+      marginTop: baseFontSize * fontMultiplier * marginMultiplier,
+      marginBottom: baseFontSize * fontMultiplier * marginMultiplier,
+      fontWeight: 'bold',
+    };
   }
 
   /**
   * Generates the default styles
   * @return the stylesheet
   */
-  _generateDefaultStyles () {
+  _generateDefaultStyles() {
     // These styles are mainly adapted from
     // https://chromium.googlesource.com/chromium/blink/+/master/Source/core/css/html.css
 
-    const BASE_FONT_SIZE = 14
+    const BASE_FONT_SIZE = 14;
     return StyleSheet.create({
       // Block level elements
-      div: { },
+      div: {},
 
       // Typography
       p: {
         fontSize: BASE_FONT_SIZE,
         marginTop: BASE_FONT_SIZE,
-        marginBottom: BASE_FONT_SIZE
+        marginBottom: BASE_FONT_SIZE,
       },
       u: { textDecorationLine: 'underline' },
       em: { fontStyle: 'italic' },
@@ -92,7 +117,7 @@ class HTMLStyles {
       small: { fontSize: BASE_FONT_SIZE * 0.8 },
       a: {
         textDecorationLine: 'underline',
-        color: '#245dc1'
+        color: '#245dc1',
       },
 
       // Typography : Headers
@@ -106,24 +131,22 @@ class HTMLStyles {
       // Typography : Lists
       ul: {
         paddingLeft: 40,
-        marginBottom: BASE_FONT_SIZE
+        marginBottom: BASE_FONT_SIZE,
       },
       ol: {
         paddingLeft: 40,
-        marginBottom: BASE_FONT_SIZE
+        marginBottom: BASE_FONT_SIZE,
       },
 
       // Typography : Breaks
-      br: {
-
-      },
+      br: {},
       hr: {
         marginTop: BASE_FONT_SIZE / 2,
         marginBottom: BASE_FONT_SIZE / 2,
         height: 1,
-        backgroundColor: '#CCC'
-      }
-    })
+        backgroundColor: '#CCC',
+      },
+    });
   }
 
   /* ****************************************************************************/
@@ -135,16 +158,13 @@ class HTMLStyles {
   * @param str: the style string
   * @return the style as an obect
   */
-  cssStringToObject (str) {
-    return str
-      .split(';')
-      .map((prop) => prop.split(':'))
-      .reduce((acc, prop) => {
-        if (prop.length === 2) {
-          acc[prop[0].trim()] = prop[1].trim()
-        }
-        return acc
-      }, {})
+  cssStringToObject(str) {
+    return str.split(';').map(prop => prop.split(':')).reduce((acc, prop) => {
+      if (prop.length === 2) {
+        acc[prop[0].trim()] = prop[1].trim();
+      }
+      return acc;
+    }, {});
   }
 
   /**
@@ -153,44 +173,50 @@ class HTMLStyles {
   * @param styleset: the styleset to convert the styles against
   * @return an object of react native styles
   */
-  cssToRNStyle (css, styleset) {
-    const styleProps = stylePropTypes[styleset]
+  cssToRNStyle(css, styleset) {
+    const styleProps = stylePropTypes[styleset];
     return Object.keys(css)
-      .map((key) => [key, css[key]])
+      .map(key => [key, css[key]])
       .map(([key, value]) => {
         // Key convert
         return [
           key
             .split('-')
-            .map((item, index) => index === 0 ? item : item[0].toUpperCase() + item.substr(1))
+            .map(
+              (item, index) =>
+                index === 0 ? item : item[0].toUpperCase() + item.substr(1)
+            )
             .join(''),
-          value]
+          value,
+        ];
       })
       .map(([key, value]) => {
-        if (!styleProps[key]) { return undefined }
+        if (!styleProps[key]) {
+          return undefined;
+        }
 
-        const testStyle = {}
-        testStyle[key] = value
+        const testStyle = {};
+        testStyle[key] = value;
         if (styleProps[key](testStyle, key, '', 'prop')) {
           // See if we can convert a 20px to a 20 automagically
           if (styleProps[key] === PropTypes.number) {
-            const numericValue = parseFloat(value.replace('px', ''))
+            const numericValue = parseFloat(value.replace('px', ''));
             if (!isNaN(numericValue)) {
-              testStyle[key] = numericValue
+              testStyle[key] = numericValue;
               if (!styleProps[key](testStyle, key, '', 'prop')) {
-                return [key, numericValue]
+                return [key, numericValue];
               }
             }
           }
-          return undefined
+          return undefined;
         }
-        return [key, value]
+        return [key, value];
       })
-      .filter((prop) => prop !== undefined)
+      .filter(prop => prop !== undefined)
       .reduce((acc, [key, value]) => {
-        acc[key] = value
-        return acc
-      }, {})
+        acc[key] = value;
+        return acc;
+      }, {});
   }
 
   /**
@@ -198,9 +224,9 @@ class HTMLStyles {
   * @param styleset=STYLESETS.TEXT: the styleset to convert the styles against
   * @return a react native style object
   */
-  cssStringToRNStyle (str, styleset = STYLESETS.TEXT) {
-    return this.cssToRNStyle(this.cssStringToObject(str), styleset)
+  cssStringToRNStyle(str, styleset = STYLESETS.TEXT) {
+    return this.cssToRNStyle(this.cssStringToObject(str), styleset);
   }
 }
 
-module.exports = new HTMLStyles()
+module.exports = new HTMLStyles();

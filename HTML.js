@@ -1,11 +1,11 @@
-import React from 'react'
-import { View } from 'react-native'
-import shallowCompare from 'react-addons-shallow-compare'
-import htmlparser2 from 'htmlparser2'
-import HTMLElement from './HTMLElement'
-import HTMLTextNode from './HTMLTextNode'
-import HTMLRenderers from './HTMLRenderers'
-import HTMLStyles from './HTMLStyles'
+import React from 'react';
+import { View } from 'react-native';
+import shallowCompare from 'react-addons-shallow-compare';
+import htmlparser2 from 'htmlparser2';
+import HTMLElement from './HTMLElement';
+import HTMLTextNode from './HTMLTextNode';
+import HTMLRenderers from './HTMLRenderers';
+import HTMLStyles from './HTMLStyles';
 import PropTypes from 'prop-types';
 
 class HTML extends React.Component {
@@ -21,15 +21,15 @@ class HTML extends React.Component {
   };
 
   static defaultProps = {
-    renderers: HTMLRenderers
-  }
+    renderers: HTMLRenderers,
+  };
 
   /* ****************************************************************************/
   // Data Lifecycle
   /* ****************************************************************************/
 
-  shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
   }
 
   /* ****************************************************************************/
@@ -43,31 +43,44 @@ class HTML extends React.Component {
   * @param parentIsText: true if the parent element was a text-y element
   * @return the equivalent RN elements
   */
-  renderHtmlAsRN (htmlElements, parentTagName, parentIsText) {
+  renderHtmlAsRN(htmlElements, parentTagName, parentIsText) {
     return htmlElements
       .map((node, index, list) => {
         if (node.type === 'text') {
-          const str = HTMLTextNode.removeWhitespaceListHTML(node.data, index, parentTagName)
+          const str = HTMLTextNode.removeWhitespaceListHTML(
+            node.data,
+            index,
+            parentTagName
+          );
           if (str.length) {
-            return (<HTMLTextNode key={index}>{str}</HTMLTextNode>)
+            return <HTMLTextNode key={index}>{str}</HTMLTextNode>;
           } else {
-            return undefined
+            return undefined;
           }
         } else if (node.type === 'tag') {
           // Generate grouping info if we are a group-type element
-          let groupInfo
+          let groupInfo;
           if (node.name === 'li') {
             groupInfo = {
-              index: htmlElements.reduce((acc, e) => {
-                if (e === node) {
-                  acc.found = true
-                } else if (!acc.found && e.type === 'tag' && e.name === 'li') {
-                  acc.index++
-                }
-                return acc
-              }, {index: 0, found: false}).index,
-              count: htmlElements.filter((e) => e.type === 'tag' && e.name === 'li').length
-            }
+              index: htmlElements.reduce(
+                (acc, e) => {
+                  if (e === node) {
+                    acc.found = true;
+                  } else if (
+                    !acc.found &&
+                    e.type === 'tag' &&
+                    e.name === 'li'
+                  ) {
+                    acc.index++;
+                  }
+                  return acc;
+                },
+                { index: 0, found: false }
+              ).index,
+              count: htmlElements.filter(
+                e => e.type === 'tag' && e.name === 'li'
+              ).length,
+            };
           }
 
           return (
@@ -81,25 +94,30 @@ class HTML extends React.Component {
               parentIsText={parentIsText}
               onLinkPress={this.props.onLinkPress}
               renderers={this.props.renderers}>
-              {this.renderHtmlAsRN(node.children, node.name, !HTMLStyles.blockElements.has(node.name))}
-            </HTMLElement>)
+              {this.renderHtmlAsRN(
+                node.children,
+                node.name,
+                !HTMLStyles.blockElements.has(node.name)
+              )}
+            </HTMLElement>
+          );
         }
       })
-      .filter((e) => e !== undefined)
+      .filter(e => e !== undefined);
   }
 
-  render () {
-    let rnNodes
+  render() {
+    let rnNodes;
     const parser = new htmlparser2.Parser(
       new htmlparser2.DomHandler((_err, dom) => {
-        rnNodes = this.renderHtmlAsRN(dom, 'body', false)
+        rnNodes = this.renderHtmlAsRN(dom, 'body', false);
       })
-    )
-    parser.write(this.props.html)
-    parser.done()
+    );
+    parser.write(this.props.html);
+    parser.done();
 
-    return (<View>{rnNodes}</View>)
+    return <View>{rnNodes}</View>;
   }
 }
 
-module.exports = HTML
+module.exports = HTML;

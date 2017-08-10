@@ -1,7 +1,7 @@
-import React from 'react'
-import { Text, View } from 'react-native'
-import shallowCompare from 'react-addons-shallow-compare'
-import HTMLStyles from './HTMLStyles'
+import React from 'react';
+import { Text, View } from 'react-native';
+import shallowCompare from 'react-addons-shallow-compare';
+import HTMLStyles from './HTMLStyles';
 import PropTypes from 'prop-types';
 
 class HTMLElement extends React.Component {
@@ -25,17 +25,17 @@ class HTMLElement extends React.Component {
   // Data Lifecycle
   /* ****************************************************************************/
 
-  shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
   }
 
   /* ****************************************************************************/
   // UI Events
   /* ****************************************************************************/
 
-  handleLinkPressed (evt) {
+  handleLinkPressed(evt) {
     if (this.props.onLinkPress) {
-      this.props.onLinkPress(evt, this.props.onLinkPressArg)
+      this.props.onLinkPress(evt, this.props.onLinkPressArg);
     }
   }
 
@@ -47,39 +47,50 @@ class HTMLElement extends React.Component {
   * Generates the prefix nodes
   * @return prefix nodes if applicable
   */
-  prefixNode () {
+  prefixNode() {
     if (this.props.tagName === 'li') {
       if (this.props.parentTagName === 'ol') {
-        return <Text>{`\n${this.props.groupInfo.index + 1}). `}</Text>
+        return <Text>{`\n${this.props.groupInfo.index + 1}). `}</Text>;
       } else {
-        return <Text>{"\n• "}</Text>
+        return <Text>{'\n• '}</Text>;
       }
     } else {
-      return undefined
+      return undefined;
     }
   }
 
   /**
   * @return the class for this node
   */
-  elementClass () {
+  elementClass() {
     if (HTMLStyles.blockElements.has(this.props.tagName)) {
       if (this.props.parentIsText) {
-        console.warn([
-          'You are trying to nest a non-text HTML element inside a text element.',
-          'The following nodes can only be rendered within themselves and not within text nodes:'
-        ].concat(Array.from(HTMLStyles.blockElements)).join('\n'))
-        return Text
+        console.warn(
+          [
+            'You are trying to nest a non-text HTML element inside a text element.',
+            'The following nodes can only be rendered within themselves and not within text nodes:',
+          ]
+            .concat(Array.from(HTMLStyles.blockElements))
+            .join('\n')
+        );
+        return Text;
       } else {
-        return View
+        return View;
       }
     } else {
-      return Text
+      return Text;
     }
   }
 
-  render () {
-    const { htmlStyles, tagName, htmlAttribs, renderers, children, ...passProps } = this.props
+  render() {
+    const {
+      htmlStyles,
+      tagName,
+      htmlAttribs,
+      renderers,
+      children,
+      ...passProps
+    } = this.props;
 
     if (renderers[tagName]) {
       const copyProps = [
@@ -87,30 +98,35 @@ class HTMLElement extends React.Component {
         'groupInfo',
         'parentTagName',
         'onLinkPress',
-        'parentIsText'
+        'parentIsText',
       ].reduce((acc, k) => {
-        acc[k] = this.props[k]
-        return acc
-      }, {})
-      return renderers[tagName](htmlAttribs, children, copyProps)
+        acc[k] = this.props[k];
+        return acc;
+      }, {});
+      return renderers[tagName](htmlAttribs, children, copyProps);
     } else {
-      const RNElem = this.elementClass()
-      const styleset = RNElem === Text ? HTMLStyles.STYLESETS.TEXT : HTMLStyles.STYLESETS.VIEW
+      const RNElem = this.elementClass();
+      const styleset = RNElem === Text
+        ? HTMLStyles.STYLESETS.TEXT
+        : HTMLStyles.STYLESETS.VIEW;
       const style = []
         .concat(
           HTMLStyles.defaultStyles[tagName],
           htmlStyles ? htmlStyles[tagName] : undefined,
-          htmlAttribs.style ? HTMLStyles.cssStringToRNStyle(htmlAttribs.style, styleset) : undefined
-        ).filter((s) => s !== undefined)
+          htmlAttribs.style
+            ? HTMLStyles.cssStringToRNStyle(htmlAttribs.style, styleset)
+            : undefined
+        )
+        .filter(s => s !== undefined);
 
       return (
         <RNElem {...passProps} style={style}>
           {this.prefixNode()}
           {this.props.children}
         </RNElem>
-      )
+      );
     }
   }
 }
 
-module.exports = HTMLElement
+module.exports = HTMLElement;
